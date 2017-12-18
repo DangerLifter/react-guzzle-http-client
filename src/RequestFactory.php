@@ -19,6 +19,7 @@ use React\Dns\Resolver\Resolver;
 use React\EventLoop\LoopInterface;
 use React\HttpClient\Client as HttpClient;
 use React\Promise\Deferred;
+use function React\Promise\Timer\timeout;
 use React\Socket\Connector;
 use React\Socket\TimeoutConnector;
 use React\Stream\ReadableStreamInterface;
@@ -63,16 +64,23 @@ class RequestFactory
             $httpClient,
             $loop
         ) {
-            $sender = $this->createSender($options, $httpClient, $loop);
-            return (new Browser($loop, $sender))
-                ->withOptions($options)
-                ->send($request)->then(function ($response) use ($loop, $options) {
-                    if (!isset($options['sink'])) {
-                        return \React\Promise\resolve($response);
-                    }
+			$sender = $this->createSender($options, $httpClient, $loop);
+			$promise =
+				(new Browser($loop, $sender))
+					->withOptions($options)
+					->send($request);
 
-                    return \React\Promise\resolve($this->sink($loop, $response, $options['sink']));
-                });
+			if (isset($options['timeout'])) {
+				$promise = timeout($promise, $options['timeout'], $loop);
+			}
+			
+			return $promise->then(function ($response) use ($loop, $options) {
+				if (!isset($options['sink'])) {
+					return \React\Promise\resolve($response);
+				}
+
+				return \React\Promise\resolve($this->sink($loop, $response, $options['sink']));
+			});
         });
     }
 
