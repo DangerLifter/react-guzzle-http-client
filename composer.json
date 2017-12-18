@@ -42,6 +42,6 @@
         }
     },
     "replace": {
-        "wyrihaximus/react-guzzle-http-client":"0.4.*"
+        "wyrihaximus/react-guzzle-http-client":"4.0.*"
     }
 }
