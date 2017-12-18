@@ -1,5 +1,5 @@
 {
-    "name": "wyrihaximus/react-guzzle-http-client",
+    "name": "dangerlifter/react-guzzle-http-client",
     "description": "Asynchronous adapter for different Guzzle versions powered by react/http-client",
     "license": "MIT",
     "authors": [
@@ -40,5 +40,8 @@
         "platform": {
             "php": "5.4"
         }
+    },
+    "replace": {
+        "wyrihaximus/react-guzzle-http-client":"0.4.*"
     }
 }
